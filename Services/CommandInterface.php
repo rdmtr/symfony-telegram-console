@@ -17,6 +17,13 @@ interface CommandInterface
     public function getTargetText(): string;
 
     /**
+     * @param string $message
+     *
+     * @return bool
+     */
+    public function isMatches(string $message): bool;
+
+    /**
      * @param Message $message
      */
     public function execute(Message $message): void;

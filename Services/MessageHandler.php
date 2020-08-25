@@ -70,21 +70,19 @@ final class MessageHandler
             }
 
             $commandTargetText = $message->isCommand() ? $message->getText() : $message->getReplyToMessage()->getText();
-            if (!$this->commands->has($commandTargetText)) {
+            if (!$command = $this->commands->get($commandTargetText)) {
                 throw new LogicException(
                     sprintf('Unsupported command for message with text "%s".', $message->getText())
                 );
             }
 
-            $this->commands->get($commandTargetText)->execute($message);
+            $command->execute($message);
         } catch (Throwable $t) {
             $this->bot->say(
                 $message->getChat()->getId(),
-                'You has not access to bot. Please edit bundle configs to use me.',
+                sprintf('Some error occurred: "%s".', $t->getMessage()),
                 $message->getId()
             );
-
-            throw $t;
         }
     }
 }

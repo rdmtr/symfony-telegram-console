@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Rdmtr\TelegramConsole\Services\Command;
 
-use Rdmtr\TelegramConsole\Services\Bot;
-use Rdmtr\TelegramConsole\Services\CommandInterface;
 use Rdmtr\TelegramConsole\Api\Objects\Message;
+use Rdmtr\TelegramConsole\Services\Bot;
 use Rdmtr\TelegramConsole\Services\Console;
 
-final class StartCommand implements CommandInterface
+final class StartCommand extends AbstractCommand
 {
     /**
      * @var Bot
@@ -53,6 +52,11 @@ final class StartCommand implements CommandInterface
      */
     public function execute(Message $message): void
     {
-        $this->bot->askWithKeyboard($message->getChat()->getId(), $this->question, $this->consoleManager->getNamespaces());
+        $this->bot->askWithKeyboard(
+            $message->getChat()->getId(),
+            $this->question,
+            $this->consoleManager->getNamespaces(),
+            $message->getId()
+        );
     }
 }

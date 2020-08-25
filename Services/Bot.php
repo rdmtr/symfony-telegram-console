@@ -45,10 +45,10 @@ class Bot
     public function say(int $chatId, string $text, int $replyToMessageId = null): void
     {
         do {
-            $message = substr($text, 0, 4096); // telegram constraint
-            $this->client->call(new SendMessage($chatId, htmlentities($message), $replyToMessageId));
-            $content = substr($text, 4096);
-        } while ($content && $text !== '');
+            $cutMessage = substr($text, 0, 4096); // telegram constraint
+            $this->client->call(new SendMessage($chatId, htmlentities($cutMessage), $replyToMessageId));
+            $text = substr($text, 4096);
+        } while ($text && $text !== '');
     }
 
     /**

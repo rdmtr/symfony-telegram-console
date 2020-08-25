@@ -43,8 +43,11 @@ class Configuration implements ConfigurationInterface
                         ->thenInvalid('Requires at least one privacy option filled: "chat_id" or "user_list".')
                     ->end()
                     ->children()
-                        ->scalarNode('chat_id')->validate()->ifEmpty()->thenUnset()->end()->end()
-                        ->scalarNode('users')->validate()->ifEmpty()->thenUnset()->end()->end()
+                        ->integerNode('chat_id')->validate()->ifEmpty()->thenUnset()->end()->end()
+                        ->arrayNode('users')
+                            ->validate()->ifEmpty()->thenUnset()->end()
+                            ->scalarPrototype()->end()
+                        ->end()
                     ->end()
                 ->end() // privacy
             ->end();

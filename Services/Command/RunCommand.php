@@ -8,8 +8,12 @@ use Rdmtr\TelegramConsole\Api\Objects\Message;
 use Rdmtr\TelegramConsole\Services\Bot;
 use Rdmtr\TelegramConsole\Services\CommandInterface;
 use Rdmtr\TelegramConsole\Services\Console;
+use Rdmtr\TelegramConsole\Services\Matcher;
 use Throwable;
 
+/**
+ * Class RunCommand
+ */
 final class RunCommand implements CommandInterface
 {
     /**
@@ -23,37 +27,64 @@ final class RunCommand implements CommandInterface
     private $console;
 
     /**
+     * @var Matcher
+     */
+    private $matcher;
+
+    /**
      * SelectNamespaceCommand constructor.
      *
      * @param Bot     $bot
      * @param Console $console
+     * @param Matcher $matcher
      */
-    public function __construct(Bot $bot, Console $console)
+    public function __construct(Bot $bot, Console $console, Matcher $matcher)
     {
         $this->bot = $bot;
         $this->console = $console;
+        $this->matcher = $matcher;
     }
 
+    /**
+     * @param string $message
+     *
+     * @return bool
+     */
+    public function isMatches(string $message): bool
+    {
+        return $this->matcher->isMatched($message, $this->getTargetText());
+    }
+
+    /**
+     * @return string
+     */
     public function getTargetText(): string
     {
-        return 'Provide command arguments|options or type nothing if they are not applicable';
+        return 'Provide arguments and options for command {command} or type "-" if they are not applicable. Use code formatting like: ```--parameter test```';
     }
 
+    /**
+     * @param Message $message
+     */
     public function execute(Message $message): void
     {
-        $commandInput = $message->getReplyToMessage()->getText().' '.$message->getText();
-        $chatId = $message->getChat()->getId();
-        $this->bot->say($chatId, sprintf('Running "%s" ...', $commandInput), $replyToId = $message->getId());
+        $replyToMessage = $message->getReplyToMessage();
+        $options = '-' === $message->getText() ? '' : $message->getText();
 
-        try {
-            $output = $this->console->runCommand($commandInput);
-            $this->bot->say(
-                $chatId,
-                sprintf('Command "%s" successfully executed. Output: "%s"', $commandInput, $output),
-                $replyToId
-            );
-        } catch (Throwable $t) {
-            $this->bot->say($chatId, sprintf('Some error occurred: "%s".', $t->getMessage()), $replyToId);
-        }
+        $command = $this->matcher->getPlaceholders($replyToMessage->getText(), $this->getTargetText())['command'];
+        $commandInput = trim($command.' '.$options);
+
+        $chatId = $message->getChat()->getId();
+
+        // TODO ask with performing
+        $this->bot->say($chatId, sprintf('Your command "%s".', $commandInput), $replyToId = $message->getId());
+        $this->bot->say($chatId, 'Running ...', $replyToId);
+
+        $output = $this->console->runCommand($commandInput);
+        $this->bot->say(
+            $chatId,
+            sprintf('Command "%s" successfully executed. Output: "%s"', $commandInput, $output),
+            $replyToId
+        );
     }
 }

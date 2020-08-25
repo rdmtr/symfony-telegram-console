@@ -29,21 +29,17 @@ final class CommandRegistry
     /**
      * @param string $targetText
      *
-     * @return bool
+     * @return CommandInterface|null
      */
-    public function has(string $targetText): bool
+    public function get(string $targetText): ?CommandInterface
     {
-        return array_key_exists($targetText, $this->commands);
-    }
+        foreach ($this->commands as $command) {
+            if ($command->isMatches($targetText)) {
+                return $command;
+            }
+        }
 
-    /**
-     * @param string $targetText
-     *
-     * @return CommandInterface
-     */
-    public function get(string $targetText): CommandInterface
-    {
-        return $this->commands[$targetText];
+        return null;
     }
 
     /**

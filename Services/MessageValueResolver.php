@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Rdmtr\TelegramConsole\Services;
 
 use DateTime;
+use Generator;
 use Rdmtr\TelegramConsole\Api\Objects\Chat;
 use Rdmtr\TelegramConsole\Api\Objects\Message;
 use Rdmtr\TelegramConsole\Api\Objects\User;
@@ -12,6 +13,7 @@ use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
+use Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -47,9 +49,9 @@ final class MessageValueResolver implements ArgumentValueResolverInterface
      * @param Request          $request
      * @param ArgumentMetadata $argument
      *
-     * @return Message
+     * @return Generator
      */
-    public function resolve(Request $request, ArgumentMetadata $argument): Message
+    public function resolve(Request $request, ArgumentMetadata $argument): Generator
     {
         $update = json_decode($request->getContent(), true);
         $message = is_array($update) ? ($update['message'] ?? false ) : null;
@@ -57,7 +59,7 @@ final class MessageValueResolver implements ArgumentValueResolverInterface
             throw new BadRequestException('Request not matched to Telegram webhook request format.');
         }
 
-        return $this->createMessage($message);
+        yield $this->createMessage($message);
     }
 
     /**
@@ -67,10 +69,10 @@ final class MessageValueResolver implements ArgumentValueResolverInterface
      */
     private function createMessage(array $messageData): Message
     {
-        $this->optionResolver
-            ->setDefined(['entities', 'reply_to_message'])
-            ->setRequired(['message_id', 'from', 'chat', 'date', 'text'])
-            ->resolve($messageData);
+        try {
+            $this->optionResolver->setRequired(['message_id', 'from', 'chat', 'date', 'text'])->resolve($messageData);
+        } catch (UndefinedOptionsException $e) {
+        }
 
         $replyToMessage = null;
         if ($messageData['reply_to_message'] ?? false) {
@@ -85,7 +87,7 @@ final class MessageValueResolver implements ArgumentValueResolverInterface
             (new DateTime())->setTimestamp($messageData['date']),
             $chat,
             $user,
-            $messageData['text'],
+            $messageData['text'] ?? '', // messages like 'group_chat_created'
             $replyToMessage
         );
     }

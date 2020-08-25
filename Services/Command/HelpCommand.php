@@ -6,12 +6,11 @@ namespace Rdmtr\TelegramConsole\Services\Command;
 
 use Rdmtr\TelegramConsole\Api\Objects\Message;
 use Rdmtr\TelegramConsole\Services\Bot;
-use Rdmtr\TelegramConsole\Services\CommandInterface;
 
 /**
  * Class HelpCommand
  */
-final class HelpCommand implements CommandInterface
+final class HelpCommand extends AbstractCommand
 {
     /**
      * @var Bot

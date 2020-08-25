@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Rdmtr\TelegramConsole\Services;
 
 use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Console\Helper\DescriptorHelper;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -28,6 +29,7 @@ final class Console
     {
         $this->application = new Application($kernel);
         $this->application->setCatchExceptions(false);
+        $this->application->setAutoExit(false);
     }
 
     /**
@@ -60,7 +62,15 @@ final class Console
      */
     public function getCommandHelp(string $command): string
     {
-        return $this->application->get($command)->getHelp();
+        $helper = new DescriptorHelper();
+        $output = new BufferedOutput();
+        $helper->describe(
+            $output,
+            $this->application->get($command),
+            ['format' => 'txt']
+        );
+
+        return $output->fetch();
     }
 
     /**
@@ -70,8 +80,10 @@ final class Console
      */
     public function runCommand(string $input): string
     {
-        $input = new ArgvInput(explode(' ', preg_replace('/\s+/', ' ', $input)));
+        $input = preg_replace('/\s+/', ' ', $input);
+        $input = new ArgvInput(explode(' ', 'bin/console '.$input));
         $output = new BufferedOutput();
+
         $this->application->run($input, $output);
 
         return $output->fetch();

@@ -11,6 +11,7 @@ final class ReplyMarkupGenerator
 {
     /**
      * @param array $keyboardButtons
+     * @param int   $countInRow
      * @param bool  $resizeKeyboard
      * @param bool  $oneTimeKeyboard
      * @param bool  $selective
@@ -21,6 +22,7 @@ final class ReplyMarkupGenerator
      */
     public function keyboard(
         array $keyboardButtons,
+        int $countInRow = 2,
         bool $resizeKeyboard = true,
         bool $oneTimeKeyboard = true,
         bool $selective = true,
@@ -28,16 +30,23 @@ final class ReplyMarkupGenerator
         bool $requestLocation = false
     ): array {
         $keyboard = [];
+        $i = 1;
         foreach ($keyboardButtons as $keyboardButton) {
-            $keyboard[] = [
+            $row[] = [
                 'text'             => $keyboardButton,
                 'request_contact'  => $requestContact,
                 'request_location' => $requestLocation,
             ];
+
+            if (0 === $i % $countInRow) {
+                $keyboard[] = $row;
+                $row = [];
+            }
+            $i++;
         }
 
         return [
-            'keyboard'          => [$keyboard],
+            'keyboard'          => $keyboard,
             'resize_keyboard'   => $resizeKeyboard,
             'one_time_keyboard' => $oneTimeKeyboard,
             'selective'         => $selective,

@@ -6,13 +6,12 @@ namespace Rdmtr\TelegramConsole\Services\Command;
 
 use Rdmtr\TelegramConsole\Api\Objects\Message;
 use Rdmtr\TelegramConsole\Services\Bot;
-use Rdmtr\TelegramConsole\Services\CommandInterface;
 use Rdmtr\TelegramConsole\Services\Console;
 
 /**
  * Class CommandSelectedCommand
  */
-final class SelectCommand implements CommandInterface
+final class SelectCommand extends AbstractCommand
 {
     /**
      * @var string
@@ -51,7 +50,7 @@ final class SelectCommand implements CommandInterface
     public function execute(Message $message): void
     {
         $chatId = $message->getChat()->getId();
-        $this->bot->say($chatId, $this->console->getCommandHelp($message->getText()), $message->getId());
-        $this->bot->ask($chatId, $this->question, $message->getId());
+        $this->bot->say($chatId, $this->console->getCommandHelp($command = $message->getText()), $message->getId());
+        $this->bot->ask($chatId, str_replace('{command}', $command, $this->question), $message->getId()); // TODO
     }
 }

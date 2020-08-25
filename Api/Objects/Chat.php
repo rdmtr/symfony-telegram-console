@@ -13,6 +13,7 @@ final class Chat
 {
     private const TYPE_PRIVATE = 'private';
     private const TYPE_GROUP = 'group';
+    private const TYPE_SUPERGROUP = 'supergroup';
 
     /**
      * @var int
@@ -32,7 +33,7 @@ final class Chat
      */
     public function __construct(int $id, string $type)
     {
-        if (!in_array($type, [self::TYPE_GROUP, self::TYPE_PRIVATE])) {
+        if (!in_array($type, [self::TYPE_GROUP, self::TYPE_PRIVATE, self::TYPE_SUPERGROUP])) {
             throw new InvalidArgumentException('Type must be "private" or "group".');
         }
 

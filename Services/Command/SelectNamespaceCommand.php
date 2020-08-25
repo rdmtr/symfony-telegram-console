@@ -6,13 +6,12 @@ namespace Rdmtr\TelegramConsole\Services\Command;
 
 use Rdmtr\TelegramConsole\Api\Objects\Message;
 use Rdmtr\TelegramConsole\Services\Bot;
-use Rdmtr\TelegramConsole\Services\CommandInterface;
 use Rdmtr\TelegramConsole\Services\Console;
 
 /**
  * Class SelectNamespaceCommand
  */
-final class SelectNamespaceCommand implements CommandInterface
+final class SelectNamespaceCommand extends AbstractCommand
 {
     /**
      * @var string

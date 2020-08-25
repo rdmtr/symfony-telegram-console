@@ -16,7 +16,7 @@ use function json_encode;
 /**
  * Class Client
  */
-final class Client
+class Client
 {
     private const BASE_URL = 'https://api.telegram.org';
 

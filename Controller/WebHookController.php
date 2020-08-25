@@ -16,7 +16,7 @@ class WebHookController
      * @param Message        $message
      * @param MessageHandler $replyProcessor
      */
-    public function action(Message $message, MessageHandler $replyProcessor)
+    public function action(Message $message, MessageHandler $replyProcessor): void
     {
         $replyProcessor->handle($message);
     }

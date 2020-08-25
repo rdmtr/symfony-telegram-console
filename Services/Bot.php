@@ -13,7 +13,7 @@ use Rdmtr\TelegramConsole\Services\Api\ReplyMarkupGenerator;
 /**
  * Class Bot
  */
-final class Bot
+class Bot
 {
     /**
      * @var Client
@@ -74,14 +74,5 @@ final class Bot
         $this->client->call(
             new SendMessage($chatId, $question, $replyToMessageId, $this->replyMarkupGenerator->keyboard($keyboard))
         );
-    }
-
-    /**
-     * @return void
-     */
-    public function configure(): void
-    {
-        $this->client->call(new SetWebhook($this->webhookUrl));
-        $this->client->call(new SetMyCommands($this->commands->getSimpleCommandsTargets()));
     }
 }

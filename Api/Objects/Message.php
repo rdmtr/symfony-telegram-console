@@ -117,6 +117,9 @@ final class Message
         return 0 === strpos($this->text, '/');
     }
 
+    /**
+     * @return bool
+     */
     public function isBotMessageReply(): bool
     {
         if (null === $this->replyToMessage) {

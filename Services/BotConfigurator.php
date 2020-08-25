@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 /**
  * Class BotConfigurator
  */
-class BotConfigurator
+final class BotConfigurator
 {
     /**
      * @var Client

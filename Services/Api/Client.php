@@ -20,16 +20,24 @@ final class Client
 {
     private const BASE_URL = 'https://api.telegram.org';
 
-    /** @var ClientInterface */
+    /**
+     * @var ClientInterface|null
+     */
     private $client;
 
-    /** @var RequestFactoryInterface */
+    /**
+     * @var RequestFactoryInterface|null
+     */
     private $requestFactory;
 
-    /** @var StreamFactoryInterface */
+    /**
+     * @var StreamFactoryInterface|null
+     */
     private $streamFactory;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $token;
 
     /**

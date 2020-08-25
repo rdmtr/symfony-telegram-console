@@ -9,6 +9,16 @@ namespace Rdmtr\TelegramConsole\Services\Api;
  */
 final class ReplyMarkupGenerator
 {
+    /**
+     * @param array $keyboardButtons
+     * @param bool  $resizeKeyboard
+     * @param bool  $oneTimeKeyboard
+     * @param bool  $selective
+     * @param bool  $requestContact
+     * @param bool  $requestLocation
+     *
+     * @return array
+     */
     public function keyboard(
         array $keyboardButtons,
         bool $resizeKeyboard = true,
@@ -34,6 +44,11 @@ final class ReplyMarkupGenerator
         ];
     }
 
+    /**
+     * @param bool $selective
+     *
+     * @return bool[]
+     */
     public function forceReply(bool $selective = true): array
     {
         return [

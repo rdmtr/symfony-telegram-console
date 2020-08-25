@@ -4,11 +4,8 @@ declare(strict_types=1);
 
 namespace Rdmtr\TelegramConsole\Services;
 
-use LogicException;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArgvInput;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\HttpKernel\KernelInterface;
 
@@ -25,7 +22,7 @@ final class Console
     /**
      * ConsoleCommandManager constructor.
      *
-     * @param Application $application
+     * @param KernelInterface $kernel
      */
     public function __construct(KernelInterface $kernel)
     {
@@ -33,11 +30,19 @@ final class Console
         $this->application->setCatchExceptions(false);
     }
 
+    /**
+     * @return array
+     */
     public function getNamespaces(): array
     {
         return $this->application->getNamespaces();
     }
 
+    /**
+     * @param string $namespace
+     *
+     * @return array
+     */
     public function getCommandList(string $namespace): array
     {
         $commands = [];
@@ -48,12 +53,22 @@ final class Console
         return $commands;
     }
 
-    public function getCommandHelp(string $command)
+    /**
+     * @param string $command
+     *
+     * @return string
+     */
+    public function getCommandHelp(string $command): string
     {
         return $this->application->get($command)->getHelp();
     }
 
-    public function runCommand(string $input)
+    /**
+     * @param string $input
+     *
+     * @return string
+     */
+    public function runCommand(string $input): string
     {
         $input = new ArgvInput(explode(' ', preg_replace('/\s+/', ' ', $input)));
         $output = new BufferedOutput();

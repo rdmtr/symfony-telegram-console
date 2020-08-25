@@ -1,0 +1,29 @@
+{
+  "update_id": 1,
+  "message": {
+    "message_id": 1,
+    "from": {
+      "id": 10,
+      "is_bot": false,
+      "first_name": "John",
+      "last_name": "Doe",
+      "username": "johndoe",
+      "language_code": "ru"
+    },
+    "chat": {
+      "id": -11,
+      "title": "Title",
+      "type": "group",
+      "all_members_are_administrators": false
+    },
+    "date": 1598104725,
+    "text": "group",
+    "entities": [
+      {
+        "offset": 0,
+        "length": 6,
+        "type": "bot_command"
+      }
+    ]
+  }
+}

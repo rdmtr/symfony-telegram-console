@@ -1,0 +1,27 @@
+{
+  "update_id": 710906496,
+  "message": {
+    "message_id": 1,
+    "from": {
+      "id": 10,
+      "first_name": "John",
+      "last_name": "Doe",
+      "username": "johndoe",
+      "is_bot": false
+    },
+    "chat": {
+      "id": -11,
+      "username": "johndoe",
+      "type": "private"
+    },
+    "date": 1598102557,
+    "text": "private",
+    "entities": [
+      {
+        "offset": 0,
+        "length": 6,
+        "type": "bot_command"
+      }
+    ]
+  }
+}

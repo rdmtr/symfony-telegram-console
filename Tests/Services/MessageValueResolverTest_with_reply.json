@@ -1,0 +1,39 @@
+{
+  "update_id": 710906499,
+  "message": {
+    "message_id": 1,
+    "from": {
+      "id": 10,
+      "is_bot": false,
+      "first_name": "John",
+      "last_name": "Doe",
+      "username": "johndoe",
+      "language_code": "ru"
+    },
+    "chat": {
+      "id": -11,
+      "title": "Title",
+      "type": "group",
+      "all_members_are_administrators": false
+    },
+    "date": 1598113578,
+    "reply_to_message": {
+      "message_id": 2,
+      "from": {
+        "id": 11,
+        "is_bot": true,
+        "first_name": "botname",
+        "username": "botname"
+      },
+      "chat": {
+        "id": -222222222,
+        "title": "Title",
+        "type": "group",
+        "all_members_are_administrators": false
+      },
+      "date": 1598113571,
+      "text": "/start"
+    },
+    "text": "with_reply"
+  }
+}

@@ -1,0 +1,39 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        bind:
+            $token: '%telegram_console.token%'
+            $acceptedUsers: '%telegram_console.accepted_users%'
+            $acceptedChat: '%telegram_console.accepted_chat%'
+
+    _instanceof:
+        Rdmtr\TelegramConsole\Services\CommandInterface:
+            tags: ['telegram_console.bot_command']
+
+    Rdmtr\TelegramConsole\Controller\:
+        resource: '../../Controller'
+        tags: ['controller.service_arguments']
+
+    Rdmtr\TelegramConsole\Command\:
+        resource: '../../Command'
+        tags: ['console.command']
+
+    Rdmtr\TelegramConsole\Services\:
+        resource: '../../Services'
+        exclude: '../../Services/{CommandInterface.php}'
+
+    Rdmtr\TelegramConsole\Services\Command\SelectCommand:
+        arguments:
+            $question: '@=service("Rdmtr\\TelegramConsole\\Services\\Command\\RunCommand").getTargetText()'
+
+    Rdmtr\TelegramConsole\Services\Command\SelectNamespaceCommand:
+        arguments:
+            $question: '@=service("Rdmtr\\TelegramConsole\\Services\\Command\\SelectCommand").getTargetText()'
+
+    Rdmtr\TelegramConsole\Services\Command\StartCommand:
+        arguments:
+            $question: '@=service("Rdmtr\\TelegramConsole\\Services\\Command\\SelectNamespaceCommand").getTargetText()'
+
+    Rdmtr\TelegramConsole\Services\CommandRegistry:
+        arguments: [!tagged telegram_console.bot_command]

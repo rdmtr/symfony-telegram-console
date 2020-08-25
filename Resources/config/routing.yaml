@@ -1,0 +1,3 @@
+telegram_console.webhook_action:
+    path: %telegram_console.webhook_url%
+    controller: Rdmtr\TelegramConsole\Controller\WebHookController::action

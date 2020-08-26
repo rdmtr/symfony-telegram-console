@@ -30,7 +30,9 @@ telegram_console:
     privacy:
         chat_id: '908908'                        # chat id which users have access to bot (add bot to chat and then open in browser https://api.telegram.org/bot<you_bot_token>/getUpdates)
         users:                                   # other users (usernames) which have access to bot
-            - 'johndoe'                       
+            - 'johndoe'     
+    excluded_namespaces:                         # optional
+            - 'orm'
 ```
 5) Configure PSR-18 and PSR-17 HTTP Client interoperability.
 You app must have HTTP Client service which implements PSR-18 interface 
@@ -61,3 +63,9 @@ then you need configure router for console env:
 router.request_context.host: 'example.org'
 router.request_context.schema: 'https'
 ```
+
+## TODO
+
+1) In private discussions keyboards opened without reply which used for step by step conversation.
+Make private discussions more convenient.
+2) Telegram concatenated group commands if they configured by `SetMyCommandsMethod`. Support of format `/<command>@bot_name`.

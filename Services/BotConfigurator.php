@@ -50,6 +50,7 @@ final class BotConfigurator
     {
         $url = $this->router->generate('telegram_console.webhook_action', [], UrlGeneratorInterface::ABSOLUTE_URL);
         $this->client->call(new SetWebhook($url));
-        $this->client->call(new SetMyCommands($this->commands->getSimpleCommandsTargets()));
+        // TODO support next syntax provided in groups: /<command>@bot_name
+        // $this->client->call(new SetMyCommands($this->commands->getSimpleCommandsTargets()));
     }
 }

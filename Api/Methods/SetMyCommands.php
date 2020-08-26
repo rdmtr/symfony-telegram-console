@@ -38,9 +38,11 @@ final class SetMyCommands implements MethodInterface
     {
         $commands = [];
         foreach ($this->commands as $name => $description) {
-            $commands[] = ['command' => $name, 'description' => $description];
+            $commands[] = is_int($name)
+                ? ['command' => $description, 'description' => '---']
+                : ['command' => $name, 'description' => $description];
         }
 
-        return $commands;
+        return ['commands' => $commands];
     }
 }

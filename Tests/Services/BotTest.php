@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Services;
+namespace Rdmtr\TelegramConsole\Tests\Services;
 
 use PHPUnit\Framework\TestCase;
 use Rdmtr\TelegramConsole\Services\Api\Client;

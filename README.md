@@ -1,4 +1,9 @@
-# Symfony Telegram Console
+Symfony Telegram Console
+========
+
+[![codecov.io](https://codecov.io/gh/rdmtr/symfony-telegram-console/branch/master/graph/badge.svg)](http://codecov.io/gh/rdmtr/symfony-telegram-console/branch/master)
+[![Build Status](https://travis-ci.com/rdmtr/symfony-telegram-console.png)](https://travis-ci.com/rdmtr/symfony-telegram-console)
+
 
 Symfony bundle which provide symfony console command interface for Telegram using [Bot Api](https://core.telegram.org/bots/api).
 

@@ -80,7 +80,7 @@ final class MessageHandler
         } catch (Throwable $t) {
             $this->bot->say(
                 $message->getChat()->getId(),
-                sprintf('Some error occurred: "%s".', $t->getMessage()),
+                $t->getMessage(),
                 $message->getId()
             );
         }

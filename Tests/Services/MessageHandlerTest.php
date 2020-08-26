@@ -6,6 +6,7 @@ namespace Rdmtr\TelegramConsole\Tests\Services;
 
 use DateTime;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 use Rdmtr\TelegramConsole\Api\Objects\Chat;
 use Rdmtr\TelegramConsole\Api\Objects\Message;
 use Rdmtr\TelegramConsole\Api\Objects\User;
@@ -26,9 +27,14 @@ class MessageHandlerTest extends TestCase
     private $messageHandler;
 
     /**
-     * @var CommandRegistry
+     * @var MockObject|Bot
      */
-    private $commands;
+    private $bot;
+
+    /**
+     * @var MockObject|CommandInterface
+     */
+    private $command;
 
     /**
      * @return void
@@ -36,8 +42,10 @@ class MessageHandlerTest extends TestCase
     public function testHandleWithAccessDeniedException(): void
     {
         $message = $this->createMessage('unknown', 2, 'text');
-
-        $this->expectException(AccessDeniedHttpException::class);
+        $this->bot
+            ->expects($this->once())
+            ->method('say')
+            ->with(2, 'You has not access to bot. Please edit bundle configs to use me.', 1);
 
         $this->messageHandler->handle($message);
     }
@@ -49,8 +57,10 @@ class MessageHandlerTest extends TestCase
     {
         // reply command without replyToMessage
         $message = $this->createMessage('johnsnow', 2, 'reply one');
-
-        $this->expectExceptionMessage('Only bot replies and bot commands supported. Check privacy mode.');
+        $this->bot
+            ->expects($this->once())
+            ->method('say')
+            ->with(2, 'Only bot replies and bot commands supported. Check privacy mode.', 1);
 
         $this->messageHandler->handle($message);
     }
@@ -61,8 +71,10 @@ class MessageHandlerTest extends TestCase
     public function testHandleWithUnsupportedCommandException(): void
     {
         $message = $this->createMessage('', 123, '/unknown');
-
-        $this->expectExceptionMessage('Unsupported command for message with text "/unknown".');
+        $this->bot
+            ->expects($this->once())
+            ->method('say')
+            ->with(123, 'Unsupported command for message with text "/unknown".', 1);
 
         $this->messageHandler->handle($message);
     }
@@ -73,7 +85,10 @@ class MessageHandlerTest extends TestCase
     public function testHandle(): void
     {
         $message = $this->createMessage('', 123, '/start');
-        $this->commands->get('/start')->expects($this->once())->method('execute');
+        /** @var MockObject $commandMock */
+        $this->command->method('isMatches')->with('/start')->willReturn(true);
+        $this->command->expects($this->once())->method('execute');
+
 
         $this->messageHandler->handle($message);
     }
@@ -83,15 +98,15 @@ class MessageHandlerTest extends TestCase
      */
     protected function setUp(): void
     {
-        $command = $this->createMock(CommandInterface::class);
-        $command->method('getTargetText')->willReturn('/start');
+        $this->command = $this->createMock(CommandInterface::class);
+        $this->command->method('getTargetText')->willReturn('/start');
         $replyCommand = $this->createMock(CommandInterface::class);
         $replyCommand->method('getTargetText')->willReturn('reply one');
 
-        $this->commands = new CommandRegistry([$command, $replyCommand]);
+        $this->bot = $this->createMock(Bot::class);
         $this->messageHandler = new MessageHandler(
-            $this->createMock(Bot::class),
-            $this->commands,
+            $this->bot,
+            new CommandRegistry([$this->command, $replyCommand]),
             ['johndoe', 'johnsnow'],
             123
         );

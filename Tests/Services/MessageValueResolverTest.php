@@ -28,7 +28,7 @@ class MessageValueResolverTest extends TestCase
      */
     public function testResolve(string $type): void
     {
-        $message = $this->resolver->resolve($this->getRequest($type), $this->getMetadataMock());
+        $message = $this->resolver->resolve($this->getRequest($type), $this->getMetadataMock())->current();
 
         $this->assertSame(1, $message->getId());
         $this->assertSame($type, $message->getText());
@@ -42,7 +42,7 @@ class MessageValueResolverTest extends TestCase
      */
     public function testResolveNested(): void
     {
-        $message = $this->resolver->resolve($this->getRequest('with_reply'), $this->getMetadataMock());
+        $message = $this->resolver->resolve($this->getRequest('with_reply'), $this->getMetadataMock())->current();
 
         $this->assertTrue($message->isBotMessageReply());
 

@@ -21,13 +21,21 @@ final class Console
     private $application;
 
     /**
+     * @var array
+     */
+    private $excludedNamespaces;
+
+    /**
      * ConsoleCommandManager constructor.
      *
      * @param KernelInterface $kernel
+     * @param array           $excludedNamespaces
      */
-    public function __construct(KernelInterface $kernel)
+    public function __construct(KernelInterface $kernel, array $excludedNamespaces)
     {
         $this->application = new Application($kernel);
+        $this->excludedNamespaces = $excludedNamespaces;
+
         $this->application->setCatchExceptions(false);
         $this->application->setAutoExit(false);
     }
@@ -37,7 +45,15 @@ final class Console
      */
     public function getNamespaces(): array
     {
-        return $this->application->getNamespaces();
+        foreach ($namespaces = $this->application->getNamespaces() as $i => $namespace) {
+            foreach ($this->excludedNamespaces as $excludedNamespace) {
+                if (0 === strpos($namespace, $excludedNamespace)) {
+                    unset($namespaces[$i]);
+                }
+            }
+        }
+
+        return $namespaces;
     }
 
     /**

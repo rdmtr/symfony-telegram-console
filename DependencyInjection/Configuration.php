@@ -13,6 +13,11 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 class Configuration implements ConfigurationInterface
 {
     /**
+     * Namespaces which commands can crush bot
+     */
+    private const EXCLUDED_NAMESPACES = ['cache'];
+
+    /**
      * @return TreeBuilder
      */
     public function getConfigTreeBuilder(): TreeBuilder
@@ -22,13 +27,15 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('telegram_console');
         $rootNode
             ->beforeNormalization()
-                ->always()
-                ->then(
+                ->always(
                     static function ($val) {
-                        if ([] === $val || ($val['webhook_url'] ?? false)) {
-                            return $val;
+                        if (!array_key_exists('webhook_url', $val)) {
+                            $val['webhook_url'] = '/'.$val['token'];
                         }
-                        $val['webhook_url'] = '/'.$val['token'];
+                        if (!array_key_exists('excluded_namespaces', $val)) {
+                            $val['excluded_namespaces'] = [];
+                        }
+                        $val['excluded_namespaces'] = array_merge($val['excluded_namespaces'], self::EXCLUDED_NAMESPACES);
 
                         return $val;
                     }
@@ -36,7 +43,7 @@ class Configuration implements ConfigurationInterface
             ->end()
             ->children()
                 ->scalarNode('token')->isRequired()->cannotBeEmpty()->end()
-                ->scalarNode('webhook_url')->defaultNull()->end()
+                ->scalarNode('webhook_url')->end()
                 ->arrayNode('privacy')->isRequired()
                     ->validate()
                         ->ifEmpty()
@@ -50,6 +57,10 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end() // privacy
+                ->arrayNode('excluded_namespaces')
+                    ->defaultValue([])
+                    ->scalarPrototype()->end()
+                ->end()
             ->end();
 
         return $treeBuilder;

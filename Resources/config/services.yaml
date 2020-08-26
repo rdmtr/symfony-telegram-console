@@ -4,6 +4,7 @@ services:
         autoconfigure: true
         bind:
             $token: '%telegram_console.token%'
+            $excludedNamespaces: '%telegram_console.excluded_namespaces%'
             $acceptedUsers: '%telegram_console.accepted_users%'
             $acceptedChat: '%telegram_console.accepted_chat%'
 

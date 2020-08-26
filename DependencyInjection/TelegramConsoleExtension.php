@@ -23,6 +23,7 @@ class TelegramConsoleExtension extends Extension
         $config = $this->processConfiguration(new Configuration(), $configs);
         $container->setParameter('telegram_console.token', $config['token']);
         $container->setParameter('telegram_console.webhook_url', $config['webhook_url']);
+        $container->setParameter('telegram_console.excluded_namespaces', $config['excluded_namespaces']);
         $container->setParameter('telegram_console.accepted_users', $config['privacy']['users'] ?? []);
         $container->setParameter('telegram_console.accepted_chat', $config['privacy']['chat_id'] ?? null);
 

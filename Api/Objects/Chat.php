@@ -50,10 +50,10 @@ final class Chat
     }
 
     /**
-     * @return string
+     * @return bool
      */
-    public function getType(): string
+    public function isPrivate(): bool
     {
-        return $this->type;
+        return self::TYPE_PRIVATE === $this->type;
     }
 }

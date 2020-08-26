@@ -62,15 +62,18 @@ final class MessageHandler
                 || $message->getChat()->getId() === $this->acceptedChat;
 
             if (!$isGranted) {
-                throw new AccessDeniedHttpException('You has not access to bot. Please edit bundle configs to use me.');
+                throw new AccessDeniedHttpException(
+                    'You has not access to bot. Please edit bundle configs to use me.'
+                );
             }
 
-            if (!$message->isBotMessageReply() && !$message->isCommand()) {
-                throw new LogicException('Only bot replies and bot commands supported. Check privacy mode.');
+            if (!$message->getChat()->isPrivate() && !$message->isBotMessageReply() && !$message->isCommand()) {
+                throw new LogicException(
+                    'Only bot replies and bot commands supported. Check privacy mode.'
+                );
             }
 
-            $commandTargetText = $message->isCommand() ? $message->getText() : $message->getReplyToMessage()->getText();
-            if (!$command = $this->commands->get($commandTargetText)) {
+            if (!$command = $this->commands->get($message->getCommandTargetText())) {
                 throw new LogicException(
                     sprintf('Unsupported command for message with text "%s".', $message->getText())
                 );
@@ -78,11 +81,7 @@ final class MessageHandler
 
             $command->execute($message);
         } catch (Throwable $t) {
-            $this->bot->say(
-                $message->getChat()->getId(),
-                $t->getMessage(),
-                $message->getId()
-            );
+            $this->bot->say($message->getChat()->getId(), $t->getMessage(), $message->getId());
         }
     }
 }

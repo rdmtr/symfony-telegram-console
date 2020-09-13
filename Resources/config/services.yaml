@@ -41,5 +41,5 @@ services:
     Rdmtr\TelegramConsole\Services\CommandRegistry:
         arguments: [ !tagged telegram_console.bot_command ]
 
-    Rdmtr\TelegramConsole\Services\Message\MessageResolver:
-        arguments: [!tagged telegram_console.message]
+#    Rdmtr\TelegramConsole\Services\Message\MessageResolver:
+#        arguments: [!tagged telegram_console.message]

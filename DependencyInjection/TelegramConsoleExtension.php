@@ -27,7 +27,7 @@ class TelegramConsoleExtension extends Extension
         $container->setParameter('telegram_console.accepted_users', $config['privacy']['users'] ?? []);
         $container->setParameter('telegram_console.accepted_chat', $config['privacy']['chat_id'] ?? null);
 
-        $container->get
+        // $container->get
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yaml');

@@ -112,7 +112,7 @@ final class Message
     /**
      * @return string
      */
-    public function getCommandTargetText(): string
+    public function getTargetText(): string
     {
         if (!$this->chat->isPrivate()) {
             $replyToMessageText = $this->replyToMessage ? $this->replyToMessage->getText() : '';

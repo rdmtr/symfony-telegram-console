@@ -10,6 +10,9 @@ use Rdmtr\TelegramConsole\Services\Matcher;
 
 class MatcherTest extends TestCase
 {
+    /** @var Matcher */
+    private $matcher;
+
     /**
      * @dataProvider getPlaceholdersProvider
      *
@@ -18,15 +21,14 @@ class MatcherTest extends TestCase
      * @param string $filledMessage
      * @param string $patternMessage
      */
-    public function testGetPlaceholders(
+    public function testMatcher(
         bool $expectedIsMatched,
         array $expectedPlaceholders,
         string $filledMessage,
         string $patternMessage
     ): void {
-        $matcher = new Matcher();
-        self::assertSame($expectedIsMatched, $matcher->isMatched($filledMessage, $patternMessage));
-        self::assertSame($expectedPlaceholders, $matcher->getPlaceholders($filledMessage, $patternMessage));
+        self::assertSame($expectedIsMatched, $this->matcher->isMatched($filledMessage, $patternMessage));
+        self::assertSame($expectedPlaceholders, $this->matcher->getPlaceholders($filledMessage, $patternMessage));
     }
 
     /**
@@ -34,6 +36,27 @@ class MatcherTest extends TestCase
      */
     public function getPlaceholdersProvider(): Generator
     {
+        yield [
+            true,
+            [],
+            '/simplecommand',
+            '/simplecommand',
+        ];
+
+        yield [
+            false,
+            [],
+            '/simplecommand',
+            '/anothersimplecommand',
+        ];
+
+        yield [
+            false,
+            [],
+            '/simplecommand',
+            '/anothersimplecommand',
+        ];
+
         yield [
             true,
             [],
@@ -56,6 +79,13 @@ class MatcherTest extends TestCase
         ];
 
         yield [
+            false,
+            [],
+            'Lorem ipsum {placeholder} pattern',
+            'Another lorem ipsum {placeholder} pattern',
+        ];
+
+        yield [
             true,
             ['one' => '1'],
             'Reply with 1 placeholder',
@@ -68,5 +98,10 @@ class MatcherTest extends TestCase
             'Reply with first and second placeholder',
             'Reply with {one} and {two} placeholder',
         ];
+    }
+
+    protected function setUp(): void
+    {
+        $this->matcher = new Matcher();
     }
 }

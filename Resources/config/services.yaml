@@ -10,7 +10,9 @@ services:
 
     _instanceof:
         Rdmtr\TelegramConsole\Services\CommandInterface:
-            tags: ['telegram_console.bot_command']
+            tags: [ 'telegram_console.bot_command' ]
+        Rdmtr\TelegramConsole\Message\AbstractMessage:
+            tags: ['telegram_console.message']
 
     Rdmtr\TelegramConsole\Controller\:
         resource: '../../Controller'
@@ -37,4 +39,7 @@ services:
             $question: '@=service("Rdmtr\\TelegramConsole\\Services\\Command\\SelectNamespaceCommand").getTargetText()'
 
     Rdmtr\TelegramConsole\Services\CommandRegistry:
-        arguments: [!tagged telegram_console.bot_command]
+        arguments: [ !tagged telegram_console.bot_command ]
+
+    Rdmtr\TelegramConsole\Services\Message\MessageResolver:
+        arguments: [!tagged telegram_console.message]

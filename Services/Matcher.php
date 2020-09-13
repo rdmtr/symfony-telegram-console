@@ -13,39 +13,49 @@ final class Matcher
     private const REGEXP_SYMBOLS = ['"', '/', '|', '^', '?', '[', ']'];
 
     /**
-     * @param string $filledMessage
-     * @param string $patternMessage
+     * @var bool[]
+     */
+    private $cache = [];
+
+    /**
+     * @param string $text
+     * @param string $pattern
      *
      * @return bool
      */
-    public function isMatched(string $filledMessage, string $patternMessage): bool
+    public static function isMatched(string $text, string $pattern): bool
     {
-        if ($filledMessage === $patternMessage) {
+        if ($text === $pattern) {
             return true;
         }
 
-        return [] !== $this->getPlaceholders($filledMessage, $patternMessage);
+        $cacheItem = $text . '|' . $pattern;
+        if (array_key_exists($cacheItem, self::$cache)) {
+            return self::$cache[$cacheItem];
+        }
+
+        return self::$cache[$cacheItem] = [] !== self::getPlaceholders($text, $pattern);
     }
 
     /**
-     * @param string $filledMessage
-     * @param string $patternMessage
+     * @param string $text
+     * @param string $pattern
      *
      * @return array
      */
-    public function getPlaceholders(string $filledMessage, string $patternMessage): array
+    public static function getPlaceholders(string $text, string $pattern): array
     {
         $parameterNames = [];
-        if (!preg_match_all(self::PLACEHOLDER_REGEXP, $patternMessage, $parameterNames)) {
+        if ($text === $pattern || !preg_match_all(self::PLACEHOLDER_REGEXP, $pattern, $parameterNames)) {
             return [];
         }
 
-        $patternMessage = str_replace(self::REGEXP_SYMBOLS, '', $patternMessage);
-        $filledMessage = str_replace(self::REGEXP_SYMBOLS, '', $filledMessage);
-        $regexp = preg_replace(self::PLACEHOLDER_REGEXP, '([a-zA-Z0-9_:-]+)', $patternMessage);
+        $pattern = str_replace(self::REGEXP_SYMBOLS, '', $pattern);
+        $text = str_replace(self::REGEXP_SYMBOLS, '', $text);
+        $regexp = preg_replace(self::PLACEHOLDER_REGEXP, '([a-zA-Z0-9_:-]+)', $pattern);
 
         $values = [];
-        if (!preg_match('/'.$regexp.'/', $filledMessage, $values)) {
+        if (!preg_match('/'.$regexp.'/', $text, $values)) {
             return [];
         }
 

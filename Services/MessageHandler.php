@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Rdmtr\TelegramConsole\Services;
 
 use LogicException;
-use Rdmtr\TelegramConsole\Api\Objects\Message;
+use Rdmtr\TelegramConsole\Api\Objects\Message as ApiMessage;
+use Rdmtr\TelegramConsole\Services\Message\MessageFactory;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Throwable;
 
 /**
@@ -33,29 +35,35 @@ final class MessageHandler
      * @var int|null
      */
     private $acceptedChat;
+    /** @var MessageBusInterface */
+    private $bus;
+    /** @var MessageFactory */
+    private $messageResolver;
 
     /**
      * ReplyProcessor constructor.
      *
-     * @param Bot             $bot
-     * @param CommandRegistry $commands
-     * @param array           $acceptedUsers
-     * @param int|null        $acceptedChat
+     * @param Bot $bot
+     * @param MessageFactory $messageResolver
+     * @param MessageBusInterface $bus
+     * @param array $acceptedUsers
+     * @param int|null $acceptedChat
      */
-    public function __construct(Bot $bot, CommandRegistry $commands, array $acceptedUsers, ?int $acceptedChat)
+    public function __construct(Bot $bot, MessageFactory $messageResolver, MessageBusInterface $bus, array $acceptedUsers, ?int $acceptedChat)
     {
         $this->bot = $bot;
-        $this->commands = $commands;
+        $this->bus = $bus;
         $this->acceptedUsers = $acceptedUsers;
         $this->acceptedChat = $acceptedChat;
+        $this->messageResolver = $messageResolver;
     }
 
     /**
-     * @param Message $message
+     * @param ApiMessage $message
      *
      * @throws Throwable
      */
-    public function handle(Message $message): void
+    public function handle(ApiMessage $message): void
     {
         try {
             $isGranted = in_array($message->getUser()->getUsername(), $this->acceptedUsers, true)
@@ -73,13 +81,13 @@ final class MessageHandler
                 );
             }
 
-            if (!$command = $this->commands->get($message->getCommandTargetText())) {
+            if (!$command = $this->commands->get($message->getTargetText())) {
                 throw new LogicException(
                     sprintf('Unsupported command for message with text "%s".', $message->getText())
                 );
             }
 
-            $command->execute($message);
+            $this->bus->dispatch($this->messageResolver->create($message->getText()));
         } catch (Throwable $t) {
             $this->bot->say($message->getChat()->getId(), $t->getMessage(), $message->getId());
         }

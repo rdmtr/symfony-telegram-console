@@ -6,6 +6,7 @@ namespace Rdmtr\TelegramConsole\Services;
 
 use DateTime;
 use Generator;
+use Psr\Log\LoggerInterface;
 use Rdmtr\TelegramConsole\Api\Objects\Chat;
 use Rdmtr\TelegramConsole\Api\Objects\Message;
 use Rdmtr\TelegramConsole\Api\Objects\User;
@@ -25,13 +26,17 @@ final class MessageValueResolver implements ArgumentValueResolverInterface
      * @var OptionsResolver
      */
     private $optionResolver;
+    /** @var LoggerInterface */
+    private $logger;
 
     /**
      * MessageValueResolver constructor.
+     * @param LoggerInterface $logger
      */
-    public function __construct()
+    public function __construct(LoggerInterface $logger)
     {
         $this->optionResolver = new OptionsResolver();
+        $this->logger = $logger;
     }
 
     /**
@@ -53,7 +58,9 @@ final class MessageValueResolver implements ArgumentValueResolverInterface
      */
     public function resolve(Request $request, ArgumentMetadata $argument): Generator
     {
-        $update = json_decode($request->getContent(), true);
+        $update = json_decode($cont = $request->getContent(), true);
+        $this->logger->error($cont);
+
         $message = is_array($update) ? ($update['message'] ?? false ) : null;
         if (!$message) {
             throw new BadRequestException('Request not matched to Telegram webhook request format.');
@@ -87,7 +94,7 @@ final class MessageValueResolver implements ArgumentValueResolverInterface
             (new DateTime())->setTimestamp($messageData['date']),
             $chat,
             $user,
-            $messageData['text'] ?? '', // messages like 'group_chat_created'
+            $messageData['text'], // messages like 'group_chat_created' need to be ignored instead of erroring
             $replyToMessage
         );
     }

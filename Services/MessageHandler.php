@@ -49,10 +49,10 @@ final class MessageHandler
      * @param array $acceptedUsers
      * @param int|null $acceptedChat
      */
-    public function __construct(Bot $bot, MessageFactory $messageResolver, MessageBusInterface $bus, array $acceptedUsers, ?int $acceptedChat)
+    public function __construct(Bot $bot, MessageFactory $messageResolver, /*MessageBusInterface $bus, */array $acceptedUsers, ?int $acceptedChat)
     {
         $this->bot = $bot;
-        $this->bus = $bus;
+       // $this->bus = $bus;
         $this->acceptedUsers = $acceptedUsers;
         $this->acceptedChat = $acceptedChat;
         $this->messageResolver = $messageResolver;

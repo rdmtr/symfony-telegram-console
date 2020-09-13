@@ -17,9 +17,9 @@ final class MessageFactory
     /**
      * @param AbstractMessage[] $messages
      */
-    public function __construct(iterable $messages)
+    public function __construct(/*iterable $messages*/)
     {
-        $this->messages = $messages;
+        // $this->messages = $messages;
     }
 
     /**
